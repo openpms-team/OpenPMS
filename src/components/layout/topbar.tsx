@@ -1,6 +1,6 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Menu, LogOut, User, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -21,6 +21,7 @@ import {
 import { LocaleSwitcher } from './locale-switcher'
 import { ThemeToggle } from './theme-toggle'
 import { MobileSidebar } from './sidebar'
+import { createClient } from '@/lib/supabase/client'
 
 const pathLabels: Record<string, string> = {
   '/': 'dashboard',
@@ -40,6 +41,7 @@ const pathLabels: Record<string, string> = {
 
 export function Topbar() {
   const pathname = usePathname()
+  const router = useRouter()
   const t = useTranslations('nav')
   const tAuth = useTranslations('auth')
 
@@ -48,6 +50,12 @@ export function Topbar() {
       ([path]) => path !== '/' && pathname.startsWith(path)
     )?.[1] ??
     (pathname === '/' ? 'dashboard' : '')
+
+  async function handleLogout() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/login')
+  }
 
   return (
     <header className="flex items-center justify-between border-b border-border/50 bg-background/80 backdrop-blur-sm px-4 h-14">
@@ -84,16 +92,16 @@ export function Topbar() {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push('/settings/security')}>
               <User className="mr-2 h-4 w-4" />
-              Profile
+              Perfil
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push('/settings/integrations')}>
               <Settings className="mr-2 h-4 w-4" />
               {t('settings')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
               {tAuth('logout')}
             </DropdownMenuItem>
