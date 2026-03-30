@@ -81,7 +81,7 @@ function NavSection({
             <Link
               href={item.href}
               className={cn(
-                'group flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-200',
+                'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium transition-all duration-200',
                 isActive
                   ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm'
                   : 'text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
