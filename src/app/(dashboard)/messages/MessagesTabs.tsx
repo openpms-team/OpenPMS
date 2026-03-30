@@ -40,17 +40,16 @@ interface MessageLogEntry {
 const CHANNELS = ['email', 'sms', 'whatsapp'] as const
 const TRIGGERS = [
   'booking_confirmed', 'pre_checkin', 'checkin_day',
-  'during_stay', 'pre_checkout', 'post_checkout', 'manual',
+  'pre_checkout', 'post_checkout', 'manual',
 ] as const
 
 const TRIGGER_LABELS: Record<string, string> = {
   booking_confirmed: 'Reserva confirmada',
   pre_checkin: 'Antes do check-in',
   checkin_day: 'Dia do check-in',
-  during_stay: 'Durante a estadia',
   pre_checkout: 'Antes do check-out',
   post_checkout: 'Após check-out',
-  manual: 'Manual',
+  manual: 'Enviar manualmente',
 }
 
 const TIME_TRIGGERS = ['pre_checkin', 'pre_checkout', 'post_checkout']
