@@ -171,7 +171,23 @@
     "linkCopied": "Link copiado",
     "linkExpired": "Link expirado",
     "linkInvalid": "Link inválido",
-    "contactHost": "Contacte o seu anfitrião"
+    "contactHost": "Contacte o seu anfitrião",
+    "tabAllGuests": "Todos os Hóspedes",
+    "tabSefCompliance": "Conformidade SEF",
+    "columnName": "Nome",
+    "columnNationality": "Nacionalidade",
+    "columnReservation": "Reserva",
+    "columnCheckIn": "Check-in",
+    "columnStatus": "Estado",
+    "columnDeadline": "Prazo",
+    "noBulletins": "Sem boletins SEF",
+    "sefStatus": {
+      "pending": "Pendente",
+      "submitted": "Enviado",
+      "accepted": "Aceite",
+      "rejected": "Rejeitado",
+      "error": "Erro"
+    }
   },
   "checkin": {
     "title": "Check-in",

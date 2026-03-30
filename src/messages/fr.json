@@ -171,7 +171,23 @@
     "linkCopied": "Lien copié",
     "linkExpired": "Lien expiré",
     "linkInvalid": "Lien invalide",
-    "contactHost": "Contactez votre hôte"
+    "contactHost": "Contactez votre hôte",
+    "tabAllGuests": "Tous les Clients",
+    "tabSefCompliance": "Conformité SEF",
+    "columnName": "Nom",
+    "columnNationality": "Nationalité",
+    "columnReservation": "Réservation",
+    "columnCheckIn": "Arrivée",
+    "columnStatus": "Statut",
+    "columnDeadline": "Date limite",
+    "noBulletins": "Aucun bulletin SEF",
+    "sefStatus": {
+      "pending": "En attente",
+      "submitted": "Envoyé",
+      "accepted": "Accepté",
+      "rejected": "Rejeté",
+      "error": "Erreur"
+    }
   },
   "checkin": {
     "title": "Arrivée",

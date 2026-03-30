@@ -171,7 +171,23 @@
     "linkCopied": "Link copied",
     "linkExpired": "Link expired",
     "linkInvalid": "Invalid link",
-    "contactHost": "Contact your host"
+    "contactHost": "Contact your host",
+    "tabAllGuests": "All Guests",
+    "tabSefCompliance": "SEF Compliance",
+    "columnName": "Name",
+    "columnNationality": "Nationality",
+    "columnReservation": "Reservation",
+    "columnCheckIn": "Check-in",
+    "columnStatus": "Status",
+    "columnDeadline": "Deadline",
+    "noBulletins": "No SEF bulletins",
+    "sefStatus": {
+      "pending": "Pending",
+      "submitted": "Submitted",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "error": "Error"
+    }
   },
   "checkin": {
     "title": "Check-in",
