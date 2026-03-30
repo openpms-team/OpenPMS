@@ -52,7 +52,8 @@ export function OwnersManager({ initialOwners }: OwnersManagerProps) {
   }
 
   async function handleSave() {
-    if (!formName || !formEmail) return
+    if (!formName.trim()) { toast.error('O nome é obrigatório'); return }
+    if (!formEmail.trim()) { toast.error('O email é obrigatório'); return }
     setSaving(true)
     try {
       const supabase = createClient()

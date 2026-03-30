@@ -94,7 +94,7 @@ export function Topbar() {
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => router.push('/settings/security')}>
               <User className="mr-2 h-4 w-4" />
-              Perfil
+              {t('profile')}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push('/settings/integrations')}>
               <Settings className="mr-2 h-4 w-4" />

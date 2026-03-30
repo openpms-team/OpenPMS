@@ -35,7 +35,8 @@
     "reset": "Reset",
     "apply": "Apply",
     "create": "Create",
-    "select": "Select..."
+    "select": "Select...",
+    "backToDashboard": "Back to Dashboard"
   },
   "auth": {
     "login": "Sign in",
@@ -57,7 +58,10 @@
     "timezone": "Timezone",
     "currency": "Currency",
     "language": "Language",
-    "letsStart": "Let's get started"
+    "letsStart": "Let's get started",
+    "tagline": "Property management, simplified.",
+    "taglineDescription": "Manage your short-term rentals, automate check-ins, stay compliant with SEF, and delight your guests.",
+    "openSource": "Open-source Property Management System"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -73,7 +77,14 @@
     "owners": "Owners",
     "analytics": "Analytics",
     "settings": "Settings",
-    "help": "Help"
+    "help": "Help",
+    "profile": "Profile"
+  },
+  "dashboard": {
+    "welcomeBack": "Welcome back",
+    "checkinsToday": "Check-ins Today",
+    "noUpcomingCheckins": "No upcoming check-ins",
+    "noUpcomingCheckouts": "No upcoming check-outs"
   },
   "properties": {
     "title": "Properties",
@@ -146,6 +157,8 @@
     "doorCode": "Door code",
     "notes": "Notes",
     "created": "Reservation created successfully",
+    "statusChangedTo": "Status changed to {status}",
+    "guestManagementComingSoon": "Guest management will be available in the check-in module.",
     "sources": {
       "direct": "Direct",
       "airbnb": "Airbnb",
@@ -384,6 +397,8 @@
     "noInvoices": "No invoices",
     "noExpenses": "No expenses",
     "createInvoice": "Create invoice",
+    "invoiceCreated": "Invoice created successfully",
+    "reservationId": "Reservation ID",
     "allProperties": "All properties",
     "allCategories": "All categories",
     "expenseAdded": "Expense added successfully",
@@ -573,6 +588,8 @@
     "network": "Connection error. Check your internet.",
     "unauthorized": "Unauthorized.",
     "notFound": "Page not found.",
+    "pageNotFound": "Page not found",
+    "pageNotFoundDescription": "The page you are looking for does not exist or has been moved.",
     "validation": {
       "required": "This field is required",
       "email": "Invalid email",

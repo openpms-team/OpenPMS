@@ -35,7 +35,8 @@
     "reset": "Repor",
     "apply": "Aplicar",
     "create": "Criar",
-    "select": "Selecionar..."
+    "select": "Selecionar...",
+    "backToDashboard": "Voltar ao painel"
   },
   "auth": {
     "login": "Iniciar sessão",
@@ -57,7 +58,10 @@
     "timezone": "Fuso horário",
     "currency": "Moeda",
     "language": "Idioma",
-    "letsStart": "Vamos começar"
+    "letsStart": "Vamos começar",
+    "tagline": "Gestão de propriedades, simplificada.",
+    "taglineDescription": "Gira os seus alojamentos de curta duração, automatize check-ins, mantenha-se em conformidade com o SEF e encante os seus hóspedes.",
+    "openSource": "Sistema de Gestão de Propriedades open-source"
   },
   "nav": {
     "dashboard": "Painel",
@@ -73,7 +77,14 @@
     "owners": "Proprietários",
     "analytics": "Estatísticas",
     "settings": "Definições",
-    "help": "Ajuda"
+    "help": "Ajuda",
+    "profile": "Perfil"
+  },
+  "dashboard": {
+    "welcomeBack": "Bem-vindo de volta",
+    "checkinsToday": "Check-ins hoje",
+    "noUpcomingCheckins": "Sem check-ins próximos",
+    "noUpcomingCheckouts": "Sem check-outs próximos"
   },
   "properties": {
     "title": "Propriedades",
@@ -146,6 +157,8 @@
     "doorCode": "Código da porta",
     "notes": "Notas",
     "created": "Reserva criada com sucesso",
+    "statusChangedTo": "Estado alterado para {status}",
+    "guestManagementComingSoon": "A gestão de hóspedes estará disponível no módulo de check-in.",
     "sources": {
       "direct": "Directa",
       "airbnb": "Airbnb",
@@ -384,6 +397,8 @@
     "noInvoices": "Sem faturas",
     "noExpenses": "Sem despesas",
     "createInvoice": "Criar fatura",
+    "invoiceCreated": "Fatura criada com sucesso",
+    "reservationId": "ID da reserva",
     "allProperties": "Todas as propriedades",
     "allCategories": "Todas as categorias",
     "expenseAdded": "Despesa adicionada com sucesso",
@@ -573,6 +588,8 @@
     "network": "Erro de ligação. Verifique a sua internet.",
     "unauthorized": "Sem autorização.",
     "notFound": "Página não encontrada.",
+    "pageNotFound": "Página não encontrada",
+    "pageNotFoundDescription": "A página que procura não existe ou foi movida.",
     "validation": {
       "required": "Este campo é obrigatório",
       "email": "Email inválido",

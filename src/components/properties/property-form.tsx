@@ -101,7 +101,11 @@ export function PropertyForm({ property, jurisdictions }: PropertyFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit, (validationErrors) => {
+      const firstError = Object.values(validationErrors)[0]
+      const msg = firstError?.message ?? tErrors('validation.required')
+      toast.error(String(msg))
+    })} className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="name">{t('name')} *</Label>

@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 
 export function CreateInvoiceButton() {
   const t = useTranslations('finance')
+  const tCommon = useTranslations('common')
   const [open, setOpen] = useState(false)
   const [reservationId, setReservationId] = useState('')
   const [loading, setLoading] = useState(false)
@@ -22,7 +23,7 @@ export function CreateInvoiceButton() {
     if (result.error) {
       toast.error(result.error)
     } else {
-      toast.success('Invoice created')
+      toast.success(t('invoiceCreated'))
       setOpen(false)
       setReservationId('')
     }
@@ -40,7 +41,7 @@ export function CreateInvoiceButton() {
   return (
     <div className="flex items-end gap-2">
       <div className="space-y-1">
-        <Label>Reservation ID</Label>
+        <Label>{t('reservationId')}</Label>
         <Input
           value={reservationId}
           onChange={(e) => setReservationId(e.target.value)}
@@ -52,7 +53,7 @@ export function CreateInvoiceButton() {
         {loading ? '...' : t('createInvoice')}
       </Button>
       <Button variant="outline" onClick={() => setOpen(false)}>
-        Cancel
+        {tCommon('cancel')}
       </Button>
     </div>
   )

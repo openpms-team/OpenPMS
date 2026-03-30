@@ -35,7 +35,7 @@ export function ReservationDetail({ reservation }: Props) {
     if (result.error) {
       toast.error(result.error)
     } else {
-      toast.success(`Status changed to ${newStatus}`)
+      toast.success(t('statusChangedTo', { status: t(`status.${newStatus}`) }))
     }
   }
 
@@ -134,7 +134,7 @@ export function ReservationDetail({ reservation }: Props) {
         <Card>
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">
-              Guest management will be available in the check-in module.
+              {t('guestManagementComingSoon')}
             </p>
           </CardContent>
         </Card>

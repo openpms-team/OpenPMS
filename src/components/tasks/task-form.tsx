@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 import { taskInsertSchema } from '@/lib/validators/task'
 import { z } from 'zod/v4'
 
@@ -38,7 +39,10 @@ export function TaskForm({ properties, staff, onSubmit }: TaskFormProps) {
   })
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit, (validationErrors) => {
+      const firstError = Object.values(validationErrors)[0]
+      toast.error(String(firstError?.message ?? 'Preencha todos os campos obrigatórios'))
+    })} className="space-y-4">
       <div className="space-y-1">
         <Label htmlFor="title">{t('titleField')} *</Label>
         <Input id="title" {...register('title')} />

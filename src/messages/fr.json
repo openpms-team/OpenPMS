@@ -35,7 +35,8 @@
     "reset": "Réinitialiser",
     "apply": "Appliquer",
     "create": "Créer",
-    "select": "Sélectionner..."
+    "select": "Sélectionner...",
+    "backToDashboard": "Retour au tableau de bord"
   },
   "auth": {
     "login": "Se connecter",
@@ -57,7 +58,10 @@
     "timezone": "Fuseau horaire",
     "currency": "Devise",
     "language": "Langue",
-    "letsStart": "Commençons"
+    "letsStart": "Commençons",
+    "tagline": "Gestion immobilière, simplifiée.",
+    "taglineDescription": "Gérez vos locations courte durée, automatisez les arrivées, restez conforme avec le SEF, et ravissez vos clients.",
+    "openSource": "Système de gestion immobilière open-source"
   },
   "nav": {
     "dashboard": "Tableau de bord",
@@ -73,7 +77,8 @@
     "owners": "Propriétaires",
     "analytics": "Statistiques",
     "settings": "Paramètres",
-    "help": "Aide"
+    "help": "Aide",
+    "profile": "Profil"
   },
   "properties": {
     "title": "Propriétés",
@@ -153,7 +158,9 @@
       "expedia": "Expedia",
       "vrbo": "VRBO",
       "other": "Autre"
-    }
+    },
+    "statusChangedTo": "Statut changé en {status}",
+    "guestManagementComingSoon": "La gestion des clients sera disponible dans le module d'enregistrement."
   },
   "calendar": {
     "title": "Calendrier",
@@ -392,7 +399,9 @@
     "invoiceStatus_draft": "Brouillon",
     "invoiceStatus_issued": "Émise",
     "invoiceStatus_paid": "Payée",
-    "invoiceStatus_cancelled": "Annulée"
+    "invoiceStatus_cancelled": "Annulée",
+    "invoiceCreated": "Facture créée",
+    "reservationId": "ID de réservation"
   },
   "pricing": {
     "title": "Tarification",
@@ -580,7 +589,9 @@
       "minLength": "Minimum {min} caractères",
       "maxLength": "Maximum {max} caractères",
       "numeric": "Doit être un nombre"
-    }
+    },
+    "pageNotFound": "Page non trouvée",
+    "pageNotFoundDescription": "La page que vous recherchez n'existe pas ou a été déplacée."
   },
   "notifications": {
     "title": "Notifications",
@@ -612,5 +623,11 @@
     "chatGreeting": "Bonjour ! Comment puis-je vous aider pendant votre séjour ?",
     "sendMessage": "Tapez un message...",
     "forwardToHost": "Transmettre à l'hôte"
+  },
+  "dashboard": {
+    "welcomeBack": "Bienvenue",
+    "checkinsToday": "Arrivées aujourd'hui",
+    "noUpcomingCheckins": "Aucune arrivée prévue",
+    "noUpcomingCheckouts": "Aucun départ prévu"
   }
 }

@@ -37,6 +37,7 @@ function StatCard({
 
 export default async function DashboardPage() {
   const t = await getTranslations('nav')
+  const tDashboard = await getTranslations('dashboard')
   const tProperties = await getTranslations('properties')
   const tReservations = await getTranslations('reservations')
   const tAnalytics = await getTranslations('analytics')
@@ -65,7 +66,7 @@ export default async function DashboardPage() {
           {t('dashboard')}
         </p>
         <h2 className="text-2xl font-bold tracking-tight mt-1">
-          Welcome back
+          {tDashboard('welcomeBack')}
         </h2>
       </div>
 
@@ -86,7 +87,7 @@ export default async function DashboardPage() {
           delay="stagger-2"
         />
         <StatCard
-          title="Check-ins Hoje"
+          title={tDashboard('checkinsToday')}
           value={stats.checkinsToday}
           icon={LogIn}
           accent="bg-[var(--success)]/10 text-[var(--success)]"
@@ -128,7 +129,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             {stats.upcomingCheckins.length === 0 ? (
-              <p className="text-sm text-muted-foreground italic">No upcoming check-ins</p>
+              <p className="text-sm text-muted-foreground italic">{tDashboard('noUpcomingCheckins')}</p>
             ) : (
               <ul className="space-y-3">
                 {stats.upcomingCheckins.map((r) => (
@@ -156,7 +157,7 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             {stats.upcomingCheckouts.length === 0 ? (
-              <p className="text-sm text-muted-foreground italic">No upcoming check-outs</p>
+              <p className="text-sm text-muted-foreground italic">{tDashboard('noUpcomingCheckouts')}</p>
             ) : (
               <ul className="space-y-3">
                 {stats.upcomingCheckouts.map((r) => (

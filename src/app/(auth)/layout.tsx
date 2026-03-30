@@ -1,8 +1,12 @@
-export default function AuthLayout({
+import { getTranslations } from 'next-intl/server'
+
+export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const t = await getTranslations('auth')
+
   return (
     <div className="flex min-h-screen bg-background bg-dots">
       {/* Left — branding panel */}
@@ -17,17 +21,14 @@ export default function AuthLayout({
         </div>
         <div className="space-y-4">
           <h2 className="text-3xl font-bold leading-tight text-sidebar-foreground">
-            Property management,
-            <br />
-            <span className="text-sidebar-primary">simplified.</span>
+            {t('tagline')}
           </h2>
           <p className="text-sm leading-relaxed text-sidebar-foreground/60 max-w-sm">
-            Manage your short-term rentals, automate check-ins,
-            stay compliant with SEF, and delight your guests.
+            {t('taglineDescription')}
           </p>
         </div>
         <p className="text-xs text-sidebar-foreground/30">
-          Open-source Property Management System
+          {t('openSource')}
         </p>
       </div>
 

@@ -96,7 +96,10 @@ export function ReservationForm({ reservation, properties }: ReservationFormProp
   const selectClass = 'h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm'
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit, (validationErrors) => {
+      const firstError = Object.values(validationErrors)[0]
+      toast.error(String(firstError?.message ?? 'Preencha todos os campos obrigatórios'))
+    })} className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="property_id">{t('property')} *</Label>
