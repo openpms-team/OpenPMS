@@ -86,7 +86,7 @@ export default async function DashboardPage() {
           delay="stagger-2"
         />
         <StatCard
-          title="Check-ins"
+          title="Check-ins Hoje"
           value={stats.checkinsToday}
           icon={LogIn}
           accent="bg-[var(--success)]/10 text-[var(--success)]"
