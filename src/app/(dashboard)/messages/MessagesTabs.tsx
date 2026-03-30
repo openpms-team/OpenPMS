@@ -53,6 +53,8 @@ const TRIGGER_LABELS: Record<string, string> = {
   manual: 'Manual',
 }
 
+const TIME_TRIGGERS = ['pre_checkin', 'pre_checkout', 'post_checkout']
+
 const VARIABLES = [
   '{{guest_name}}', '{{property_name}}', '{{check_in_date}}',
   '{{check_out_date}}', '{{num_nights}}', '{{door_code}}',
@@ -80,6 +82,8 @@ export function MessagesTabs({ initialTemplates, logEntries }: MessagesTabsProps
   const [formBodyPt, setFormBodyPt] = useState('')
   const [formBodyEn, setFormBodyEn] = useState('')
   const [formLang, setFormLang] = useState<'pt' | 'en'>('pt')
+  const [formOffsetDays, setFormOffsetDays] = useState(0)
+  const [formOffsetHours, setFormOffsetHours] = useState(0)
 
   function resetForm() {
     setFormName('')
@@ -90,6 +94,8 @@ export function MessagesTabs({ initialTemplates, logEntries }: MessagesTabsProps
     setFormBodyPt('')
     setFormBodyEn('')
     setFormLang('pt')
+    setFormOffsetDays(0)
+    setFormOffsetHours(0)
   }
 
   function openCreate() {
@@ -106,6 +112,9 @@ export function MessagesTabs({ initialTemplates, logEntries }: MessagesTabsProps
     setFormSubjectEn(tpl.subject?.en ?? '')
     setFormBodyPt(tpl.body?.pt ?? '')
     setFormBodyEn(tpl.body?.en ?? '')
+    const conditions = tpl.body as unknown as Record<string, unknown>
+    setFormOffsetDays(Number(conditions?.offset_days) || 0)
+    setFormOffsetHours(Number(conditions?.offset_hours) || 0)
     setEditing(tpl)
     setCreating(true)
   }
@@ -121,12 +130,17 @@ export function MessagesTabs({ initialTemplates, logEntries }: MessagesTabsProps
 
     setSaving(true)
     const supabase = createClient()
+    const conditions = TIME_TRIGGERS.includes(formTrigger)
+      ? { offset_days: formOffsetDays, offset_hours: formOffsetHours }
+      : {}
+
     const data = {
       name: formName,
       channel: formChannel,
       trigger_type: formTrigger,
       subject: { pt: formSubjectPt, en: formSubjectEn },
       body: { pt: formBodyPt, en: formBodyEn },
+      conditions,
       active: true,
     }
 
@@ -201,6 +215,35 @@ export function MessagesTabs({ initialTemplates, logEntries }: MessagesTabsProps
                   </select>
                 </div>
               </div>
+
+              {TIME_TRIGGERS.includes(formTrigger) && (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label>
+                      {formTrigger.startsWith('pre_') ? 'Dias antes' : 'Dias depois'}
+                    </Label>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={30}
+                      value={formOffsetDays}
+                      onChange={e => setFormOffsetDays(Number(e.target.value))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>
+                      {formTrigger.startsWith('pre_') ? 'Horas antes' : 'Horas depois'}
+                    </Label>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={23}
+                      value={formOffsetHours}
+                      onChange={e => setFormOffsetHours(Number(e.target.value))}
+                    />
+                  </div>
+                </div>
+              )}
 
               {formChannel === 'email' && (
                 <div className="space-y-2">
