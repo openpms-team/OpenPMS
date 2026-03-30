@@ -1,17 +1,15 @@
 import { createClient } from '@/lib/supabase/server'
 import { OwnersManager } from './OwnersManager'
 
-interface OwnerRow {
-  id: string
-  name: string
-  email: string
-  phone: string | null
-  nif: string | null
-  iban: string | null
-}
-
 export default async function OwnersPage() {
-  let owners: OwnerRow[] = []
+  let owners: Array<{
+    id: string
+    name: string
+    email: string
+    phone: string | null
+    nif: string | null
+    iban: string | null
+  }> = []
 
   try {
     const supabase = await createClient()
@@ -19,7 +17,7 @@ export default async function OwnersPage() {
       .from('owners')
       .select('id, name, email, phone, nif, iban')
       .order('name')
-    if (data) owners = data as OwnerRow[]
+    if (data) owners = data
   } catch {
     // RLS or connection error
   }
