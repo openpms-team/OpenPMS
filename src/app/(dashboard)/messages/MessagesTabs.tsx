@@ -3,7 +3,6 @@
 import { useState, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import { Plus, MessageSquare, X } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -128,12 +127,11 @@ export function MessagesTabs({ initialTemplates, logEntries }: MessagesTabsProps
     if (!formBodyPt.trim() && !formBodyEn.trim()) { toast.error('Corpo da mensagem é obrigatório'); return }
 
     setSaving(true)
-    const supabase = createClient()
     const conditions = TIME_TRIGGERS.includes(formTrigger)
       ? { offset_days: formOffsetDays, offset_hours: formOffsetHours }
       : {}
 
-    const data = {
+    const templateData = {
       name: formName,
       channel: formChannel,
       trigger_type: formTrigger,
@@ -143,22 +141,19 @@ export function MessagesTabs({ initialTemplates, logEntries }: MessagesTabsProps
       active: true,
     }
 
+    const { createTemplateAction, updateTemplateAction } = await import('./actions')
+
     if (editing) {
-      const { error } = await supabase
-        .from('message_templates')
-        .update(data)
-        .eq('id', editing.id)
-      if (error) { toast.error('Erro ao guardar'); setSaving(false); return }
-      setTemplates(prev => prev.map(tpl => tpl.id === editing.id ? { ...tpl, ...data } : tpl))
+      const result = await updateTemplateAction(editing.id, templateData)
+      if ('error' in result && result.error) { toast.error(result.error); setSaving(false); return }
+      setTemplates(prev => prev.map(tpl => tpl.id === editing.id ? { ...tpl, ...templateData } : tpl))
       toast.success('Modelo atualizado')
     } else {
-      const { data: created, error } = await supabase
-        .from('message_templates')
-        .insert(data)
-        .select()
-        .single()
-      if (error) { toast.error('Erro ao criar'); setSaving(false); return }
-      setTemplates(prev => [created as MessageTemplate, ...prev])
+      const result = await createTemplateAction(templateData)
+      if ('error' in result && result.error) { toast.error(result.error); setSaving(false); return }
+      if ('data' in result && result.data) {
+        setTemplates(prev => [result.data as MessageTemplate, ...prev])
+      }
       toast.success('Modelo criado')
     }
 
@@ -167,8 +162,8 @@ export function MessagesTabs({ initialTemplates, logEntries }: MessagesTabsProps
   }, [formName, formChannel, formTrigger, formSubjectPt, formSubjectEn, formBodyPt, formBodyEn, editing])
 
   async function handleToggleActive(id: string, active: boolean) {
-    const supabase = createClient()
-    await supabase.from('message_templates').update({ active: !active }).eq('id', id)
+    const { toggleTemplateActiveAction } = await import('./actions')
+    await toggleTemplateActiveAction(id, active)
     setTemplates(prev => prev.map(tpl => tpl.id === id ? { ...tpl, active: !active } : tpl))
   }
 

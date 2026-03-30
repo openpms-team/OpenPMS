@@ -74,9 +74,9 @@ export function TeamManager({ initialStaff }: TeamManagerProps) {
 
   async function handleRoleChange(id: string, newRole: string) {
     try {
-      const supabase = createClient()
-      const { error } = await supabase.from('staff').update({ role: newRole }).eq('id', id)
-      if (error) { toast.error(t('roleError')); return }
+      const { updateStaffRoleAction } = await import('./actions')
+      const result = await updateStaffRoleAction(id, newRole)
+      if ('error' in result && result.error) { toast.error(result.error); return }
       setStaff((prev) => prev.map((m) => (m.id === id ? { ...m, role: newRole } : m)))
       toast.success(t('roleUpdated'))
     } catch {
@@ -86,9 +86,9 @@ export function TeamManager({ initialStaff }: TeamManagerProps) {
 
   async function handleToggleActive(id: string, active: boolean) {
     try {
-      const supabase = createClient()
-      const { error } = await supabase.from('staff').update({ active: !active }).eq('id', id)
-      if (error) { toast.error(t('toggleError')); return }
+      const { toggleStaffActiveAction } = await import('./actions')
+      const result = await toggleStaffActiveAction(id, active)
+      if ('error' in result && result.error) { toast.error(result.error); return }
       setStaff((prev) => prev.map((m) => (m.id === id ? { ...m, active: !active } : m)))
     } catch {
       toast.error(t('toggleError'))

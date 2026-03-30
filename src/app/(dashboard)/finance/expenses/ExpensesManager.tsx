@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Receipt, Plus } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -46,6 +46,7 @@ interface ExpensesManagerProps {
 
 export function ExpensesManager({ initialExpenses, properties }: ExpensesManagerProps) {
   const t = useTranslations('finance')
+  const router = useRouter()
   const [expenses, setExpenses] = useState<ExpenseRow[]>(initialExpenses)
   const [showForm, setShowForm] = useState(false)
 
@@ -59,18 +60,6 @@ export function ExpensesManager({ initialExpenses, properties }: ExpensesManager
   const [formDate, setFormDate] = useState(new Date().toISOString().slice(0, 10))
   const [saving, setSaving] = useState(false)
 
-  async function fetchExpenses() {
-    try {
-      const supabase = createClient()
-      const { data } = await supabase
-        .from('expenses')
-        .select('id, date, category, description, amount, property_id, properties(name)')
-        .order('date', { ascending: false })
-      if (data) setExpenses(data as unknown as ExpenseRow[])
-    } catch {
-      // RLS or connection error
-    }
-  }
 
   const filtered = expenses.filter((exp) => {
     if (filterProperty && exp.property_id !== filterProperty) return false
@@ -83,16 +72,16 @@ export function ExpensesManager({ initialExpenses, properties }: ExpensesManager
     if (!formDate) { toast.error('A data é obrigatória'); return }
     setSaving(true)
     try {
-      const supabase = createClient()
-      const { error } = await supabase.from('expenses').insert({
-        property_id: formPropertyId || null,
+      const { createExpenseAction } = await import('./actions')
+      const result = await createExpenseAction({
+        property_id: formPropertyId || undefined,
         category: formCategory,
         description: formDescription,
         amount: parseFloat(formAmount),
         date: formDate,
       })
-      if (error) {
-        toast.error(error.message || t('expenseError'))
+      if ('error' in result && result.error) {
+        toast.error(result.error)
         return
       }
       toast.success(t('expenseAdded'))
@@ -102,7 +91,7 @@ export function ExpensesManager({ initialExpenses, properties }: ExpensesManager
       setFormAmount('')
       setFormDate(new Date().toISOString().slice(0, 10))
       setShowForm(false)
-      fetchExpenses()
+      router.refresh()
     } catch {
       toast.error(t('expenseError'))
     } finally {
