@@ -8,6 +8,16 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
+import { toast } from 'sonner'
+import { Mail, MessageSquare, Send } from 'lucide-react'
+
+// Gmail/Outlook presets
+const EMAIL_PRESETS: Record<string, { host: string; port: string; secure: boolean }> = {
+  gmail: { host: 'smtp.gmail.com', port: '587', secure: true },
+  outlook: { host: 'smtp-mail.outlook.com', port: '587', secure: true },
+  yahoo: { host: 'smtp.mail.yahoo.com', port: '587', secure: true },
+  custom: { host: '', port: '587', secure: true },
+}
 
 interface SmtpConfig {
   host: string
@@ -25,308 +35,287 @@ interface TwilioConfig {
   fromNumber: string
 }
 
-interface WhatsAppConfig {
-  accessToken: string
-  phoneNumberId: string
-}
-
 type IntegrationType = 'smtp' | 'twilio' | 'whatsapp'
 
-const defaultSmtp: SmtpConfig = {
-  host: '', port: '587', secure: true, username: '',
-  password: '', fromName: '', fromEmail: '',
-}
-const defaultTwilio: TwilioConfig = { accountSid: '', authToken: '', fromNumber: '' }
-const defaultWhatsApp: WhatsAppConfig = { accessToken: '', phoneNumberId: '' }
-
 export default function MessagingSettingsPage() {
-  const t = useTranslations('settings.messaging')
+  const t = useTranslations('settings')
+  const tc = useTranslations('common')
 
-  const [smtp, setSmtp] = useState<SmtpConfig>(defaultSmtp)
+  // Email state
+  const [emailProvider, setEmailProvider] = useState('gmail')
+  const [smtp, setSmtp] = useState<SmtpConfig>({
+    ...EMAIL_PRESETS.gmail,
+    username: '',
+    password: '',
+    fromName: '',
+    fromEmail: '',
+  })
   const [smtpEnabled, setSmtpEnabled] = useState(false)
-  const [twilio, setTwilio] = useState<TwilioConfig>(defaultTwilio)
+
+  // SMS state
+  const [twilio, setTwilio] = useState<TwilioConfig>({
+    accountSid: '',
+    authToken: '',
+    fromNumber: '',
+  })
   const [twilioEnabled, setTwilioEnabled] = useState(false)
-  const [whatsapp, setWhatsapp] = useState<WhatsAppConfig>(defaultWhatsApp)
-  const [whatsappEnabled, setWhatsappEnabled] = useState(false)
+
+  // WhatsApp state
+  const [waPhone, setWaPhone] = useState('')
+  const [waEnabled, setWaEnabled] = useState(false)
 
   const [saving, setSaving] = useState<IntegrationType | null>(null)
-  const [testing, setTesting] = useState<IntegrationType | null>(null)
-  const [message, setMessage] = useState('')
+
+  function handleProviderChange(provider: string) {
+    setEmailProvider(provider)
+    const preset = EMAIL_PRESETS[provider] ?? EMAIL_PRESETS.custom
+    setSmtp((prev) => ({ ...prev, ...preset }))
+  }
 
   async function handleSave(type: IntegrationType) {
     setSaving(type)
-    setMessage('')
     try {
       const supabase = createClient()
-      const configMap = { smtp, twilio, whatsapp }
-      const enabledMap = { smtp: smtpEnabled, twilio: twilioEnabled, whatsapp: whatsappEnabled }
+      let config: Record<string, unknown> = {}
+      let enabled = false
+
+      if (type === 'smtp') {
+        config = { ...smtp }
+        enabled = smtpEnabled
+      } else if (type === 'twilio') {
+        config = { ...twilio }
+        enabled = twilioEnabled
+      } else if (type === 'whatsapp') {
+        config = { phone: waPhone }
+        enabled = waEnabled
+      }
+
       const { error } = await supabase.from('integration_config').upsert(
-        {
-          type,
-          config: JSON.stringify(configMap[type]),
-          enabled: enabledMap[type],
-        },
+        { type, config: JSON.stringify(config), enabled },
         { onConflict: 'type' }
       )
-      setMessage(error ? t('saveError') : t('saveSuccess'))
+
+      if (error) {
+        toast.error('Erro ao guardar')
+      } else {
+        toast.success('Guardado com sucesso')
+      }
     } catch {
-      setMessage(t('saveError'))
+      toast.error('Erro ao guardar')
     } finally {
       setSaving(null)
     }
   }
 
-  async function handleTest(type: IntegrationType) {
-    setTesting(type)
-    setMessage('')
-    try {
-      const supabase = createClient()
-      const { error } = await supabase.functions.invoke('test-messaging', {
-        body: { type },
-      })
-      setMessage(error ? t('testFailed') : t('testSuccess'))
-    } catch {
-      setMessage(t('testFailed'))
-    } finally {
-      setTesting(null)
-    }
-  }
-
-  function updateSmtp(field: keyof SmtpConfig, value: string | boolean) {
-    setSmtp((prev) => ({ ...prev, [field]: value }))
-  }
-
-  function updateTwilio(field: keyof TwilioConfig, value: string) {
-    setTwilio((prev) => ({ ...prev, [field]: value }))
-  }
-
-  function updateWhatsApp(field: keyof WhatsAppConfig, value: string) {
-    setWhatsapp((prev) => ({ ...prev, [field]: value }))
-  }
-
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold tracking-tight">{t('title')}</h2>
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight">Mensagens</h2>
+        <p className="text-muted-foreground mt-1">
+          Configure como o OpenPMS envia mensagens aos seus hóspedes.
+        </p>
+      </div>
 
-      {message && (
-        <p className="text-sm text-muted-foreground">{message}</p>
-      )}
-
-      {/* Email (SMTP) */}
+      {/* EMAIL */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('email')}</CardTitle>
-          <CardDescription>{t('emailDescription')}</CardDescription>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+              <Mail className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <CardTitle>Email</CardTitle>
+              <CardDescription>
+                Envie confirmações de reserva, instruções de check-in e lembretes por email.
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="smtp-host">{t('host')}</Label>
-              <Input
-                id="smtp-host"
-                value={smtp.host}
-                onChange={(e) => updateSmtp('host', e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="smtp-port">{t('port')}</Label>
-              <Input
-                id="smtp-port"
-                value={smtp.port}
-                onChange={(e) => updateSmtp('port', e.target.value)}
-              />
-            </div>
+          <div className="space-y-2">
+            <Label>Qual o seu serviço de email?</Label>
+            <select
+              value={emailProvider}
+              onChange={(e) => handleProviderChange(e.target.value)}
+              className="h-10 w-full rounded-lg border border-input bg-transparent px-3 text-base"
+            >
+              <option value="gmail">Gmail (Google)</option>
+              <option value="outlook">Outlook / Hotmail (Microsoft)</option>
+              <option value="yahoo">Yahoo Mail</option>
+              <option value="custom">Outro (configuração manual)</option>
+            </select>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="smtp-secure"
-              checked={smtp.secure}
-              onCheckedChange={(checked) => updateSmtp('secure', checked === true)}
-            />
-            <Label htmlFor="smtp-secure">{t('secure')}</Label>
-          </div>
+          {emailProvider === 'gmail' && (
+            <div className="rounded-lg bg-muted/50 p-4 text-sm space-y-2">
+              <p className="font-medium">Como configurar com Gmail:</p>
+              <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                <li>Vá a myaccount.google.com → Segurança</li>
+                <li>Active a "Verificação em 2 passos" (se ainda não tiver)</li>
+                <li>Procure "Passwords de aplicações" e crie uma nova</li>
+                <li>Copie a password gerada e cole no campo abaixo</li>
+              </ol>
+            </div>
+          )}
+
+          {emailProvider === 'outlook' && (
+            <div className="rounded-lg bg-muted/50 p-4 text-sm space-y-2">
+              <p className="font-medium">Como configurar com Outlook:</p>
+              <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                <li>Use o seu email Outlook normal como utilizador</li>
+                <li>Use a sua password do Outlook</li>
+                <li>Se tiver 2FA, crie uma password de aplicação em account.microsoft.com</li>
+              </ol>
+            </div>
+          )}
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="smtp-username">{t('username')}</Label>
+              <Label htmlFor="smtp-email">O seu email</Label>
               <Input
-                id="smtp-username"
-                value={smtp.username}
-                onChange={(e) => updateSmtp('username', e.target.value)}
+                id="smtp-email"
+                type="email"
+                placeholder="exemplo@gmail.com"
+                value={smtp.fromEmail}
+                onChange={(e) => setSmtp((p) => ({ ...p, fromEmail: e.target.value, username: e.target.value }))}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="smtp-password">{t('password')}</Label>
+              <Label htmlFor="smtp-password">Password de aplicação</Label>
               <Input
                 id="smtp-password"
                 type="password"
+                placeholder="••••••••"
                 value={smtp.password}
-                onChange={(e) => updateSmtp('password', e.target.value)}
+                onChange={(e) => setSmtp((p) => ({ ...p, password: e.target.value }))}
               />
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="smtp-from-name">{t('fromName')}</Label>
-              <Input
-                id="smtp-from-name"
-                value={smtp.fromName}
-                onChange={(e) => updateSmtp('fromName', e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="smtp-from-email">{t('fromEmail')}</Label>
-              <Input
-                id="smtp-from-email"
-                type="email"
-                value={smtp.fromEmail}
-                onChange={(e) => updateSmtp('fromEmail', e.target.value)}
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="smtp-name">Nome que aparece nos emails</Label>
+            <Input
+              id="smtp-name"
+              placeholder="O nome da sua empresa de AL"
+              value={smtp.fromName}
+              onChange={(e) => setSmtp((p) => ({ ...p, fromName: e.target.value }))}
+            />
           </div>
+
+          {emailProvider === 'custom' && (
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="smtp-host">Servidor SMTP</Label>
+                <Input id="smtp-host" value={smtp.host} onChange={(e) => setSmtp((p) => ({ ...p, host: e.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="smtp-port">Porta</Label>
+                <Input id="smtp-port" value={smtp.port} onChange={(e) => setSmtp((p) => ({ ...p, port: e.target.value }))} />
+              </div>
+              <div className="flex items-end gap-2 pb-1">
+                <Checkbox id="smtp-secure" checked={smtp.secure} onCheckedChange={(c) => setSmtp((p) => ({ ...p, secure: c === true }))} />
+                <Label htmlFor="smtp-secure">Ligação segura (TLS)</Label>
+              </div>
+            </div>
+          )}
 
           <div className="flex items-center gap-2">
-            <Checkbox
-              id="smtp-enabled"
-              checked={smtpEnabled}
-              onCheckedChange={(checked) => setSmtpEnabled(checked === true)}
-            />
-            <Label htmlFor="smtp-enabled">{t('enabled')}</Label>
+            <Checkbox id="email-enabled" checked={smtpEnabled} onCheckedChange={(c) => setSmtpEnabled(c === true)} />
+            <Label htmlFor="email-enabled">Activar envio de emails</Label>
           </div>
 
-          <div className="flex gap-2 pt-2">
-            <Button
-              variant="outline"
-              onClick={() => handleTest('smtp')}
-              disabled={testing === 'smtp'}
-            >
-              {testing === 'smtp' ? t('testing') : t('testConnection')}
-            </Button>
-            <Button
-              onClick={() => handleSave('smtp')}
-              disabled={saving === 'smtp'}
-            >
-              {saving === 'smtp' ? t('saving') : t('save')}
-            </Button>
-          </div>
+          <Button onClick={() => handleSave('smtp')} disabled={saving === 'smtp'}>
+            {saving === 'smtp' ? 'A guardar...' : 'Guardar configuração de email'}
+          </Button>
         </CardContent>
       </Card>
 
-      {/* SMS (Twilio) */}
+      {/* SMS */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('sms')}</CardTitle>
-          <CardDescription>{t('smsDescription')}</CardDescription>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10">
+              <Send className="h-5 w-5 text-green-600" />
+            </div>
+            <div>
+              <CardTitle>SMS</CardTitle>
+              <CardDescription>
+                Envie lembretes de check-in e códigos de acesso por SMS. Requer conta Twilio (pago por mensagem).
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="twilio-sid">{t('accountSid')}</Label>
-            <Input
-              id="twilio-sid"
-              value={twilio.accountSid}
-              onChange={(e) => updateTwilio('accountSid', e.target.value)}
-            />
+          <div className="rounded-lg bg-muted/50 p-4 text-sm space-y-2">
+            <p className="font-medium">Como configurar SMS:</p>
+            <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+              <li>Crie uma conta gratuita em twilio.com</li>
+              <li>No painel Twilio, copie o "Account SID" e "Auth Token"</li>
+              <li>Compre um número de telefone (~€1/mês)</li>
+              <li>Cada SMS custa ~€0.05 a enviar</li>
+            </ol>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="twilio-token">{t('authToken')}</Label>
-            <Input
-              id="twilio-token"
-              type="password"
-              value={twilio.authToken}
-              onChange={(e) => updateTwilio('authToken', e.target.value)}
-            />
+            <Label htmlFor="twilio-sid">Account SID</Label>
+            <Input id="twilio-sid" placeholder="AC..." value={twilio.accountSid} onChange={(e) => setTwilio((p) => ({ ...p, accountSid: e.target.value }))} />
           </div>
-
           <div className="space-y-2">
-            <Label htmlFor="twilio-number">{t('fromNumber')}</Label>
-            <Input
-              id="twilio-number"
-              value={twilio.fromNumber}
-              onChange={(e) => updateTwilio('fromNumber', e.target.value)}
-              placeholder="+351..."
-            />
+            <Label htmlFor="twilio-token">Auth Token</Label>
+            <Input id="twilio-token" type="password" value={twilio.authToken} onChange={(e) => setTwilio((p) => ({ ...p, authToken: e.target.value }))} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="twilio-number">Número de envio</Label>
+            <Input id="twilio-number" placeholder="+351..." value={twilio.fromNumber} onChange={(e) => setTwilio((p) => ({ ...p, fromNumber: e.target.value }))} />
           </div>
 
           <div className="flex items-center gap-2">
-            <Checkbox
-              id="twilio-enabled"
-              checked={twilioEnabled}
-              onCheckedChange={(checked) => setTwilioEnabled(checked === true)}
-            />
-            <Label htmlFor="twilio-enabled">{t('enabled')}</Label>
+            <Checkbox id="sms-enabled" checked={twilioEnabled} onCheckedChange={(c) => setTwilioEnabled(c === true)} />
+            <Label htmlFor="sms-enabled">Activar envio de SMS</Label>
           </div>
 
-          <div className="flex gap-2 pt-2">
-            <Button
-              variant="outline"
-              onClick={() => handleTest('twilio')}
-              disabled={testing === 'twilio'}
-            >
-              {testing === 'twilio' ? t('testing') : t('testConnection')}
-            </Button>
-            <Button
-              onClick={() => handleSave('twilio')}
-              disabled={saving === 'twilio'}
-            >
-              {saving === 'twilio' ? t('saving') : t('save')}
-            </Button>
-          </div>
+          <Button onClick={() => handleSave('twilio')} disabled={saving === 'twilio'}>
+            {saving === 'twilio' ? 'A guardar...' : 'Guardar configuração de SMS'}
+          </Button>
         </CardContent>
       </Card>
 
-      {/* WhatsApp (Meta) */}
+      {/* WhatsApp */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('whatsapp')}</CardTitle>
-          <CardDescription>{t('whatsappDescription')}</CardDescription>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10">
+              <MessageSquare className="h-5 w-5 text-emerald-600" />
+            </div>
+            <div>
+              <CardTitle>WhatsApp</CardTitle>
+              <CardDescription>
+                Envie links de check-in e mensagens de boas-vindas pelo WhatsApp.
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="wa-token">{t('accessToken')}</Label>
-            <Input
-              id="wa-token"
-              type="password"
-              value={whatsapp.accessToken}
-              onChange={(e) => updateWhatsApp('accessToken', e.target.value)}
-            />
+          <div className="rounded-lg bg-muted/50 p-4 text-sm">
+            <p className="text-muted-foreground">
+              O envio automático via WhatsApp Business API requer aprovação da Meta e é indicado para volumes altos.
+              Para uso simples, o OpenPMS pode gerar links <code>wa.me</code> que abrem uma conversa pré-escrita no seu WhatsApp pessoal.
+            </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="wa-phone-id">{t('phoneNumberId')}</Label>
-            <Input
-              id="wa-phone-id"
-              value={whatsapp.phoneNumberId}
-              onChange={(e) => updateWhatsApp('phoneNumberId', e.target.value)}
-            />
+            <Label htmlFor="wa-phone">O seu número de WhatsApp (com indicativo)</Label>
+            <Input id="wa-phone" placeholder="+351 912 345 678" value={waPhone} onChange={(e) => setWaPhone(e.target.value)} />
           </div>
 
           <div className="flex items-center gap-2">
-            <Checkbox
-              id="wa-enabled"
-              checked={whatsappEnabled}
-              onCheckedChange={(checked) => setWhatsappEnabled(checked === true)}
-            />
-            <Label htmlFor="wa-enabled">{t('enabled')}</Label>
+            <Checkbox id="wa-enabled" checked={waEnabled} onCheckedChange={(c) => setWaEnabled(c === true)} />
+            <Label htmlFor="wa-enabled">Activar WhatsApp</Label>
           </div>
 
-          <div className="flex gap-2 pt-2">
-            <Button
-              variant="outline"
-              onClick={() => handleTest('whatsapp')}
-              disabled={testing === 'whatsapp'}
-            >
-              {testing === 'whatsapp' ? t('testing') : t('testConnection')}
-            </Button>
-            <Button
-              onClick={() => handleSave('whatsapp')}
-              disabled={saving === 'whatsapp'}
-            >
-              {saving === 'whatsapp' ? t('saving') : t('save')}
-            </Button>
-          </div>
+          <Button onClick={() => handleSave('whatsapp')} disabled={saving === 'whatsapp'}>
+            {saving === 'whatsapp' ? 'A guardar...' : 'Guardar configuração WhatsApp'}
+          </Button>
         </CardContent>
       </Card>
     </div>
