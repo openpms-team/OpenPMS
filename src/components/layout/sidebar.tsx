@@ -45,7 +45,7 @@ const operationsItems: NavItem[] = [
 
 const financeItems: NavItem[] = [
   { href: '/finance', labelKey: 'finance', icon: DollarSign },
-  { href: '/pricing', labelKey: 'pricing', icon: Tag },
+  { href: '/finance/pricing', labelKey: 'pricing', icon: Tag },
   { href: '/owners', labelKey: 'owners', icon: UserCheck },
 ]
 
