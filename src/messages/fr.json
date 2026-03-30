@@ -34,7 +34,8 @@
     "import": "Importer",
     "reset": "Réinitialiser",
     "apply": "Appliquer",
-    "create": "Créer"
+    "create": "Créer",
+    "select": "Sélectionner..."
   },
   "auth": {
     "login": "Se connecter",
@@ -138,7 +139,21 @@
     "guestName": "Client",
     "amount": "Montant",
     "statusChangeError": "Erreur lors du changement de statut",
-    "statusLabel": "Statut"
+    "statusLabel": "Statut",
+    "guestEmail": "Email du client",
+    "guestPhone": "Téléphone du client",
+    "numGuests": "Nombre de clients",
+    "doorCode": "Code de porte",
+    "notes": "Notes",
+    "created": "Réservation créée avec succès",
+    "sources": {
+      "direct": "Directe",
+      "airbnb": "Airbnb",
+      "booking": "Booking.com",
+      "expedia": "Expedia",
+      "vrbo": "VRBO",
+      "other": "Autre"
+    }
   },
   "calendar": {
     "title": "Calendrier",

@@ -34,7 +34,8 @@
     "import": "Importar",
     "reset": "Repor",
     "apply": "Aplicar",
-    "create": "Criar"
+    "create": "Criar",
+    "select": "Selecionar..."
   },
   "auth": {
     "login": "Iniciar sessão",
@@ -138,7 +139,21 @@
     "guestName": "Hóspede",
     "amount": "Valor",
     "statusChangeError": "Erro ao alterar estado",
-    "statusLabel": "Estado"
+    "statusLabel": "Estado",
+    "guestEmail": "Email do hóspede",
+    "guestPhone": "Telefone do hóspede",
+    "numGuests": "Número de hóspedes",
+    "doorCode": "Código da porta",
+    "notes": "Notas",
+    "created": "Reserva criada com sucesso",
+    "sources": {
+      "direct": "Directa",
+      "airbnb": "Airbnb",
+      "booking": "Booking.com",
+      "expedia": "Expedia",
+      "vrbo": "VRBO",
+      "other": "Outra"
+    }
   },
   "calendar": {
     "title": "Calendário",

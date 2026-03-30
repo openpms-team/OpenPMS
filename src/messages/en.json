@@ -34,7 +34,8 @@
     "import": "Import",
     "reset": "Reset",
     "apply": "Apply",
-    "create": "Create"
+    "create": "Create",
+    "select": "Select..."
   },
   "auth": {
     "login": "Sign in",
@@ -138,7 +139,21 @@
     "guestName": "Guest",
     "amount": "Amount",
     "statusChangeError": "Failed to change status",
-    "statusLabel": "Status"
+    "statusLabel": "Status",
+    "guestEmail": "Guest email",
+    "guestPhone": "Guest phone",
+    "numGuests": "Number of guests",
+    "doorCode": "Door code",
+    "notes": "Notes",
+    "created": "Reservation created successfully",
+    "sources": {
+      "direct": "Direct",
+      "airbnb": "Airbnb",
+      "booking": "Booking.com",
+      "expedia": "Expedia",
+      "vrbo": "VRBO",
+      "other": "Other"
+    }
   },
   "calendar": {
     "title": "Calendar",
