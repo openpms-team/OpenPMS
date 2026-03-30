@@ -89,6 +89,27 @@ export default function SetupPage() {
                   return
                 }
 
+                // Get the new user
+                const { data: { user } } = await supabase.auth.getUser()
+
+                if (user) {
+                  // Create staff entry with admin role
+                  await supabase.from('staff').insert({
+                    user_id: user.id,
+                    name: step1Data.businessName,
+                    role: 'admin',
+                    active: true,
+                  })
+
+                  // Create user_profiles entry
+                  await supabase.from('user_profiles').insert({
+                    id: user.id,
+                    totp_enabled: false,
+                    preferred_locale: step1Data.language,
+                    timezone: step1Data.timezone,
+                  })
+                }
+
                 // Store business settings
                 await supabase.from('settings').upsert([
                   { key: 'business_name', value: { value: step1Data.businessName } },
