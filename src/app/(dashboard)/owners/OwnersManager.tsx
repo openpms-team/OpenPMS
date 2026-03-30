@@ -223,7 +223,7 @@ export function OwnersManager({ initialOwners, properties, ownerProperties }: Ow
             const props = getOwnerProperties(owner.id)
             return (
               <Card key={owner.id}>
-                <CardContent className="pt-6">
+                <CardContent>
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="font-semibold text-lg">{owner.name}</h3>
