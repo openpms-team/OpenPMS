@@ -32,8 +32,7 @@ export default async function FinancePage() {
         .lte('date', endOfMonth),
       supabase
         .from('tax_calculations')
-        .select('id, total_tax, status')
-        .eq('status', 'pending'),
+        .select('id, tax_amount'),
       supabase
         .from('invoices')
         .select('id')
@@ -50,8 +49,8 @@ export default async function FinancePage() {
         .reduce((sum, e) => sum + (e.amount ?? 0), 0)
     }
     if (taxRes.data) {
-      taxPending = (taxRes.data as { id: string; total_tax: number; status: string }[])
-        .reduce((sum, tx) => sum + (tx.total_tax ?? 0), 0)
+      taxPending = (taxRes.data as { id: string; tax_amount: number }[])
+        .reduce((sum, tx) => sum + (tx.tax_amount ?? 0), 0)
     }
     if (invRes.data) {
       invoiceCount = invRes.data.length

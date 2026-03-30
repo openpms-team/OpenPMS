@@ -26,6 +26,7 @@
     "email": "Email",
     "phone": "Téléphone",
     "notes": "Notes",
+    "genericError": "Une erreur est survenue",
     "description": "Description",
     "all": "Tous",
     "none": "Aucun",
@@ -286,7 +287,10 @@
     "delivered": "Livré",
     "failed": "Échoué",
     "noTemplates": "Aucun modèle de message",
-    "noLogEntries": "Aucune entrée dans le journal"
+    "noLogEntries": "Aucune entrée dans le journal",
+    "sendMessage": "Envoyer un message",
+    "selectTemplate": "Sélectionner un modèle...",
+    "messageSent": "Message envoyé avec succès"
   },
   "tasks": {
     "title": "Tâches",

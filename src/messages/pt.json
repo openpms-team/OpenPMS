@@ -26,6 +26,7 @@
     "email": "Email",
     "phone": "Telefone",
     "notes": "Notas",
+    "genericError": "Ocorreu um erro",
     "description": "Descrição",
     "all": "Todos",
     "none": "Nenhum",
@@ -292,7 +293,10 @@
     "delivered": "Entregue",
     "failed": "Falhou",
     "noTemplates": "Sem modelos de mensagem",
-    "noLogEntries": "Sem registos de mensagens"
+    "noLogEntries": "Sem registos de mensagens",
+    "sendMessage": "Enviar Mensagem",
+    "selectTemplate": "Selecionar modelo...",
+    "messageSent": "Mensagem enviada com sucesso"
   },
   "tasks": {
     "title": "Tarefas",

@@ -4,11 +4,9 @@ import { TaxDashboard } from './TaxDashboard'
 
 interface TaxRow {
   id: string
-  guests_taxable: number
-  nights_taxable: number
-  rate: number
-  total_tax: number
-  status: string
+  taxable_guests: number
+  taxable_nights: number
+  tax_amount: number
   reservations: {
     guest_name: string
     check_in: string
@@ -32,7 +30,7 @@ export default async function TaxDashboardPage() {
 
     const { data } = await supabase
       .from('tax_calculations')
-      .select('id, guests_taxable, nights_taxable, rate, total_tax, status, reservations(guest_name, check_in, properties(name))')
+      .select('id, taxable_guests, taxable_nights, tax_amount, reservations(guest_name, check_in, properties(name))')
       .gte('created_at', startOfMonth)
       .lte('created_at', endOfMonth)
       .order('created_at', { ascending: false })

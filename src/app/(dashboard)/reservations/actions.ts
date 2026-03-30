@@ -11,6 +11,8 @@ import { isValidTransition } from '@/lib/reservations/status-machine'
 import { onReservationCreated, onReservationStatusChanged } from '@/lib/messaging/triggers'
 import { createAutoTasks } from '@/lib/tasks/auto-create'
 import { dispatchWebhook } from '@/lib/webhooks/dispatch'
+import { createClient } from '@/lib/supabase/server'
+import { calculateTouristTax } from '@/lib/taxes/calculator'
 import type { ReservationStatus } from '@/types/database'
 
 export async function createReservationAction(formData: unknown) {
@@ -31,6 +33,78 @@ export async function createReservationAction(formData: unknown) {
     createAutoTasks(reservation, 'new_reservation').catch(() => {})
     // Dispatch webhooks
     dispatchWebhook('reservation.created', { reservation }).catch(() => {})
+
+    // Auto-calculate tourist tax (non-blocking)
+    try {
+      const supabase = await createClient()
+      const { data: property } = await supabase
+        .from('properties')
+        .select('tax_jurisdiction_id')
+        .eq('id', reservation.property_id)
+        .single()
+
+      if (property?.tax_jurisdiction_id) {
+        const { data: rules } = await supabase
+          .from('tax_rules')
+          .select('*')
+          .eq('jurisdiction_id', property.tax_jurisdiction_id)
+        const { data: exemptions } = await supabase
+          .from('tax_exemptions')
+          .select('*')
+          .eq('jurisdiction_id', property.tax_jurisdiction_id)
+        const { data: jurisdiction } = await supabase
+          .from('tax_jurisdictions')
+          .select('name')
+          .eq('id', property.tax_jurisdiction_id)
+          .single()
+
+        const guests = Array.from({ length: reservation.num_guests }, () => ({
+          age: 30,
+          nationality: 'UNK',
+        }))
+
+        const result = calculateTouristTax(
+          {
+            reservationId: reservation.id,
+            propertyId: reservation.property_id,
+            jurisdictionId: property.tax_jurisdiction_id,
+            checkIn: reservation.check_in,
+            checkOut: reservation.check_out,
+            guests,
+          },
+          (rules ?? []).map((r: Record<string, unknown>) => ({
+            id: r.id as string,
+            rate_amount: Number(r.rate_amount),
+            rate_type: r.rate_type as string,
+            season_start: r.season_start as string | null,
+            season_end: r.season_end as string | null,
+            max_nights: r.max_nights as number | null,
+            min_guest_age: r.min_guest_age as number,
+            priority: r.priority as number,
+          })),
+          (exemptions ?? []).map((e: Record<string, unknown>) => ({
+            type: e.type as string,
+            description: e.description as string | null,
+            condition_json: e.condition_json as Record<string, unknown>,
+          })),
+          jurisdiction?.name ?? ''
+        )
+
+        await supabase.from('tax_calculations').upsert(
+          {
+            reservation_id: reservation.id,
+            jurisdiction_id: property.tax_jurisdiction_id,
+            taxable_nights: result.nightsTaxable,
+            taxable_guests: result.guestsTaxable,
+            tax_amount: result.totalAmount,
+            breakdown: result.breakdown,
+          },
+          { onConflict: 'reservation_id' }
+        )
+      }
+    } catch {
+      // Tax calculation is non-critical
+    }
 
     revalidatePath('/reservations')
     revalidatePath('/calendar')

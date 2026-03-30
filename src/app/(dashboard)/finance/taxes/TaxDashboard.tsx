@@ -8,15 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table, TableHeader, TableBody, TableHead, TableRow, TableCell,
 } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
 
 interface TaxRow {
   id: string
-  guests_taxable: number
-  nights_taxable: number
-  rate: number
-  total_tax: number
-  status: string
+  taxable_guests: number
+  taxable_nights: number
+  tax_amount: number
   reservations: {
     guest_name: string
     check_in: string
@@ -45,7 +42,7 @@ export function TaxDashboard({ initialTaxes, initialYear, initialMonth }: TaxDas
 
       const { data } = await supabase
         .from('tax_calculations')
-        .select('id, guests_taxable, nights_taxable, rate, total_tax, status, reservations(guest_name, check_in, properties(name))')
+        .select('id, taxable_guests, taxable_nights, tax_amount, reservations(guest_name, check_in, properties(name))')
         .gte('created_at', startOfMonth)
         .lte('created_at', endOfMonth)
         .order('created_at', { ascending: false })
@@ -73,9 +70,7 @@ export function TaxDashboard({ initialTaxes, initialYear, initialMonth }: TaxDas
     setHasFilterChanged(true)
   }
 
-  const totalTax = taxes.reduce((sum, tx) => sum + (tx.total_tax ?? 0), 0)
-  const pendingTax = taxes.filter((tx) => tx.status === 'pending').reduce((sum, tx) => sum + (tx.total_tax ?? 0), 0)
-  const collectedTax = taxes.filter((tx) => tx.status === 'collected').reduce((sum, tx) => sum + (tx.total_tax ?? 0), 0)
+  const totalTax = taxes.reduce((sum, tx) => sum + (tx.tax_amount ?? 0), 0)
 
   const now = new Date()
   const months = Array.from({ length: 12 }, (_, i) => i + 1)
@@ -89,18 +84,6 @@ export function TaxDashboard({ initialTaxes, initialYear, initialMonth }: TaxDas
             <CardTitle className="text-sm font-medium">{t('totalTax')}</CardTitle>
           </CardHeader>
           <CardContent><p className="text-2xl font-bold">{totalTax.toFixed(2)}</p></CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">{t('taxPending')}</CardTitle>
-          </CardHeader>
-          <CardContent><p className="text-2xl font-bold">{pendingTax.toFixed(2)}</p></CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">{t('taxCollected')}</CardTitle>
-          </CardHeader>
-          <CardContent><p className="text-2xl font-bold">{collectedTax.toFixed(2)}</p></CardContent>
         </Card>
       </div>
 
@@ -139,9 +122,7 @@ export function TaxDashboard({ initialTaxes, initialYear, initialMonth }: TaxDas
               <TableHead>{t('checkIn')}</TableHead>
               <TableHead>{t('guestsTaxable')}</TableHead>
               <TableHead>{t('nightsTaxable')}</TableHead>
-              <TableHead>{t('rate')}</TableHead>
               <TableHead>{t('totalTax')}</TableHead>
-              <TableHead>{t('status')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -150,15 +131,9 @@ export function TaxDashboard({ initialTaxes, initialYear, initialMonth }: TaxDas
                 <TableCell className="font-medium">{tx.reservations?.guest_name ?? '—'}</TableCell>
                 <TableCell>{tx.reservations?.properties?.name ?? '—'}</TableCell>
                 <TableCell>{tx.reservations?.check_in ?? '—'}</TableCell>
-                <TableCell>{tx.guests_taxable}</TableCell>
-                <TableCell>{tx.nights_taxable}</TableCell>
-                <TableCell>{tx.rate.toFixed(2)}</TableCell>
-                <TableCell>{tx.total_tax.toFixed(2)}</TableCell>
-                <TableCell>
-                  <Badge variant={tx.status === 'collected' ? 'default' : 'outline'}>
-                    {tx.status === 'collected' ? t('taxCollected') : t('taxPending')}
-                  </Badge>
-                </TableCell>
+                <TableCell>{tx.taxable_guests}</TableCell>
+                <TableCell>{tx.taxable_nights}</TableCell>
+                <TableCell>{tx.tax_amount.toFixed(2)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

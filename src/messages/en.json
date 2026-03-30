@@ -26,6 +26,7 @@
     "email": "Email",
     "phone": "Phone",
     "notes": "Notes",
+    "genericError": "An error occurred",
     "description": "Description",
     "all": "All",
     "none": "None",
@@ -292,7 +293,10 @@
     "delivered": "Delivered",
     "failed": "Failed",
     "noTemplates": "No message templates",
-    "noLogEntries": "No message log entries"
+    "noLogEntries": "No message log entries",
+    "sendMessage": "Send Message",
+    "selectTemplate": "Select template...",
+    "messageSent": "Message sent successfully"
   },
   "tasks": {
     "title": "Tasks",

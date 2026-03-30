@@ -47,6 +47,68 @@ export async function createInvoiceAction(reservationId: string) {
 
   if (error) return { error: error.message }
 
+  // Try to send to configured external invoicing provider
+  try {
+    const { data: config } = await supabase
+      .from('integration_config')
+      .select('type, config, enabled')
+      .in('type', ['moloni', 'invoicexpress'])
+      .eq('enabled', true)
+      .single()
+
+    if (config) {
+      const providerConfig = typeof config.config === 'string'
+        ? JSON.parse(config.config) as Record<string, string>
+        : config.config as Record<string, string>
+
+      if (config.type === 'moloni') {
+        const { MoloniAdapter } = await import('@/lib/integrations/invoicing/moloni')
+        const adapter = new MoloniAdapter()
+        const result = await adapter.createInvoice(providerConfig, {
+          clientName: reservation.guest_name,
+          clientNIF: '',
+          clientCountry: 'PT',
+          date: new Date(),
+          lines: [
+            { description: `Alojamento — ${reservation.check_in} a ${reservation.check_out}`, quantity: 1, unitPrice: accommodationAmount, taxRate: 0.06 },
+            { description: 'Taxa Turística Municipal', quantity: 1, unitPrice: taxAmount, taxRate: 0, taxExemptionCode: 'M07' },
+          ],
+          reservationRef: reservationId,
+        })
+        await supabase
+          .from('invoices')
+          .update({
+            external_id: result.externalId,
+            provider: 'moloni',
+            status: result.status === 'draft' ? 'draft' : 'issued',
+          })
+          .eq('id', invoice.id)
+      } else if (config.type === 'invoicexpress') {
+        const { InvoiceXpressAdapter } = await import('@/lib/integrations/invoicing/invoicexpress')
+        const adapter = new InvoiceXpressAdapter()
+        const result = await adapter.createInvoice(providerConfig, {
+          clientName: reservation.guest_name,
+          clientCountry: 'PT',
+          date: new Date(),
+          lines: [
+            { description: `Alojamento — ${reservation.check_in} a ${reservation.check_out}`, quantity: 1, unitPrice: accommodationAmount, taxRate: 0.06 },
+            { description: 'Taxa Turística Municipal', quantity: 1, unitPrice: taxAmount, taxRate: 0, taxExemptionCode: 'M07' },
+          ],
+          reservationRef: reservationId,
+        })
+        await supabase
+          .from('invoices')
+          .update({
+            external_id: result.externalId,
+            provider: 'invoicexpress',
+          })
+          .eq('id', invoice.id)
+      }
+    }
+  } catch {
+    // External provider is best-effort, local invoice already saved
+  }
+
   revalidatePath('/finance/invoices')
   return { data: invoice }
 }
