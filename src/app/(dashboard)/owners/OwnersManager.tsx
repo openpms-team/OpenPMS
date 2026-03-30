@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Plus, Users } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 import { createOwnerAction } from './actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -30,6 +30,7 @@ interface OwnersManagerProps {
 export function OwnersManager({ initialOwners }: OwnersManagerProps) {
   const t = useTranslations('owners')
   const tc = useTranslations('common')
+  const router = useRouter()
   const [owners, setOwners] = useState<OwnerRow[]>(initialOwners)
   const [showForm, setShowForm] = useState(false)
   const [formName, setFormName] = useState('')
@@ -39,18 +40,6 @@ export function OwnersManager({ initialOwners }: OwnersManagerProps) {
   const [formIban, setFormIban] = useState('')
   const [saving, setSaving] = useState(false)
 
-  async function fetchOwners() {
-    try {
-      const supabase = createClient()
-      const { data } = await supabase
-        .from('owners')
-        .select('id, name, email, phone, nif, iban')
-        .order('name')
-      if (data) setOwners(data as unknown as OwnerRow[])
-    } catch {
-      // RLS or connection error
-    }
-  }
 
   async function handleSave() {
     if (!formName.trim()) { toast.error('O nome é obrigatório'); return }
@@ -72,7 +61,7 @@ export function OwnersManager({ initialOwners }: OwnersManagerProps) {
       setFormNif('')
       setFormIban('')
       setShowForm(false)
-      fetchOwners()
+      router.refresh()
     } catch {
       toast.error(tc('error'))
     } finally {

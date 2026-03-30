@@ -8,7 +8,6 @@ interface OwnerRow {
   phone: string | null
   nif: string | null
   iban: string | null
-  properties_count: number
 }
 
 export default async function OwnersPage() {
@@ -18,9 +17,9 @@ export default async function OwnersPage() {
     const supabase = await createClient()
     const { data } = await supabase
       .from('owners')
-      .select('id, name, email, phone, nif, iban, properties_count')
+      .select('id, name, email, phone, nif, iban')
       .order('name')
-    if (data) owners = data as unknown as OwnerRow[]
+    if (data) owners = data as OwnerRow[]
   } catch {
     // RLS or connection error
   }
