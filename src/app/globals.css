@@ -160,6 +160,11 @@
   body {
     @apply bg-background text-foreground text-[15px] leading-relaxed;
   }
+  a, button, [role="button"], [data-slot="button"], [data-slot="dropdown-menu-trigger"],
+  [data-slot="accordion-trigger"], [data-slot="select-trigger"], [data-slot="sheet-trigger"],
+  [data-slot="switch"], [data-slot="checkbox"], label[for] {
+    cursor: pointer;
+  }
   html {
     @apply font-sans antialiased;
     scroll-behavior: smooth;
