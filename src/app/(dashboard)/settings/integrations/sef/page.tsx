@@ -56,11 +56,13 @@ export default function SefSettingsPage() {
     setTesting(true)
     setMessage('')
     try {
-      const supabase = createClient()
-      const { error } = await supabase.functions.invoke('sef-test-connection', {
-        body: { nif, establishment_id: establishmentId, access_key: accessKey },
+      const response = await fetch('/api/sef/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nif, establishment_id: establishmentId, access_key: accessKey }),
       })
-      setMessage(error ? t('sef.testFailed') : t('sef.testSuccess'))
+      const data = await response.json()
+      setMessage(data.success ? t('sef.testSuccess') : t('sef.testFailed'))
     } catch {
       setMessage(t('sef.testFailed'))
     } finally {
