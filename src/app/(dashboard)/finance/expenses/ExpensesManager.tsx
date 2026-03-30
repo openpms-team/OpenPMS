@@ -79,7 +79,8 @@ export function ExpensesManager({ initialExpenses, properties }: ExpensesManager
   })
 
   async function handleAddExpense() {
-    if (!formAmount || !formDate) return
+    if (!formAmount) { toast.error('O valor é obrigatório'); return }
+    if (!formDate) { toast.error('A data é obrigatória'); return }
     setSaving(true)
     try {
       const supabase = createClient()
@@ -91,7 +92,7 @@ export function ExpensesManager({ initialExpenses, properties }: ExpensesManager
         date: formDate,
       })
       if (error) {
-        toast.error(t('expenseError'))
+        toast.error(error.message || t('expenseError'))
         return
       }
       toast.success(t('expenseAdded'))

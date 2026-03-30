@@ -56,16 +56,16 @@ export function OwnersManager({ initialOwners }: OwnersManagerProps) {
     if (!formEmail.trim()) { toast.error('O email é obrigatório'); return }
     setSaving(true)
     try {
-      const supabase = createClient()
-      const { error } = await supabase.from('owners').insert({
+      const { createOwnerAction } = await import('./actions')
+      const result = await createOwnerAction({
         name: formName,
         email: formEmail,
-        phone: formPhone || null,
-        nif: formNif || null,
-        iban: formIban || null,
+        phone: formPhone || undefined,
+        nif: formNif || undefined,
+        iban: formIban || undefined,
       })
-      if (error) { toast.error(tc('error')); return }
-      toast.success(tc('save'))
+      if ('error' in result && result.error) { toast.error(result.error); return }
+      toast.success('Proprietário criado')
       setFormName('')
       setFormEmail('')
       setFormPhone('')
