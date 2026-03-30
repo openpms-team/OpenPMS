@@ -20,7 +20,6 @@ interface OwnerRow {
   phone: string | null
   nif: string | null
   iban: string | null
-  properties_count: number
 }
 
 interface OwnersManagerProps {
