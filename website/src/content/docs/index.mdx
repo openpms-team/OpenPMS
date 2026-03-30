@@ -1,0 +1,52 @@
+---
+title: OpenPMS — Open Source Property Management
+description: Free, open-source PMS for short-term rental managers
+template: splash
+hero:
+  tagline: The PMS with AI that others will want to copy. Free. Open source. Your data.
+  actions:
+    - text: Deploy for Free
+      link: /getting-started/deploy/
+      icon: right-arrow
+      variant: primary
+    - text: Documentation
+      link: /getting-started/introduction/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Why OpenPMS?
+
+Deploy your own property management system in under 10 minutes. No subscriptions, no vendor lock-in, no data hostage situations.
+
+<CardGrid stagger>
+  <Card title="Zero Cost Infrastructure" icon="star">
+    Runs entirely on Vercel (free tier) and Supabase (free tier). No monthly fees, no per-booking charges.
+  </Card>
+  <Card title="AI-Powered Operations" icon="rocket">
+    Smart pricing, automated guest messaging, OCR check-in, BI chat, and more. Bring your own API key, control your budget.
+  </Card>
+  <Card title="Guest Self-Check-In" icon="approve-check">
+    Mobile-friendly 4-step wizard with document OCR. Guests complete check-in before arrival.
+  </Card>
+  <Card title="SEF/SIBA Compliance" icon="document">
+    Automatic XML generation for SEF bulletins and DAT files for SIBA. Built for Portuguese Alojamento Local.
+  </Card>
+  <Card title="Channel Sync via iCal" icon="translate">
+    Import and export iCal feeds from Airbnb, Booking.com, and others. Conflict detection included.
+  </Card>
+  <Card title="Task Management" icon="list-format">
+    Kanban boards, auto-generated cleaning tasks, mobile-optimized checklists for your team.
+  </Card>
+  <Card title="Multi-Language" icon="open-book">
+    Interface available in Portuguese, English, and French. Guest portal adapts to the guest's language.
+  </Card>
+  <Card title="Your Data, Your Server" icon="setting">
+    Self-hosted on your own Supabase instance. Full database access, export anytime, no lock-in.
+  </Card>
+</CardGrid>
+
+## Built for Short-Term Rental Managers
+
+OpenPMS covers the full lifecycle: properties, reservations, guest check-in, messaging, tasks, finances, owner reports, and analytics. Whether you manage 1 apartment or 50, the stack scales with you at zero cost.

@@ -1,0 +1,5 @@
+guest_name,check_in,check_out,guests,amount,email,notes
+João Silva,2025-06-01,2025-06-05,2,450.00,joao@email.com,Early check-in requested
+María García,2025-06-10,2025-06-15,3,750.00,maria@email.com,
+Pierre Müller,2025-06-20,2025-06-22,1,200.00,,Needs parking
+Ana Santos,2025-07-01,2025-07-05,4,900.00,ana@email.com,Anniversary trip
