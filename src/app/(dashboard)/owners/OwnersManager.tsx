@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Plus, Users } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { createOwnerAction } from './actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -43,7 +44,7 @@ export function OwnersManager({ initialOwners }: OwnersManagerProps) {
       const supabase = createClient()
       const { data } = await supabase
         .from('owners')
-        .select('id, name, email, phone, nif, iban, properties_count')
+        .select('id, name, email, phone, nif, iban')
         .order('name')
       if (data) setOwners(data as unknown as OwnerRow[])
     } catch {
@@ -56,7 +57,6 @@ export function OwnersManager({ initialOwners }: OwnersManagerProps) {
     if (!formEmail.trim()) { toast.error('O email é obrigatório'); return }
     setSaving(true)
     try {
-      const { createOwnerAction } = await import('./actions')
       const result = await createOwnerAction({
         name: formName,
         email: formEmail,
