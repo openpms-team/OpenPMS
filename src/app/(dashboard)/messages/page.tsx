@@ -8,6 +8,8 @@ interface MessageTemplate {
   channel: string
   trigger_type: string
   active: boolean
+  subject: Record<string, string>
+  body: Record<string, string>
 }
 
 interface MessageLogEntry {
