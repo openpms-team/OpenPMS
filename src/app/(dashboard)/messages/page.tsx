@@ -31,7 +31,7 @@ export default async function MessagesPage() {
     const [templatesRes, logRes] = await Promise.all([
       supabase
         .from('message_templates')
-        .select('id, name, channel, trigger_type, active')
+        .select('id, name, channel, trigger_type, active, subject, body')
         .order('created_at', { ascending: false }),
       supabase
         .from('message_log')
