@@ -133,7 +133,7 @@ export function OwnersManager({ initialOwners }: OwnersManagerProps) {
                 <TableCell>{owner.email}</TableCell>
                 <TableCell>{owner.nif ?? '—'}</TableCell>
                 <TableCell>{owner.iban ?? '—'}</TableCell>
-                <TableCell>{owner.properties_count}</TableCell>
+                <TableCell>—</TableCell>
               </TableRow>
             ))}
           </TableBody>
