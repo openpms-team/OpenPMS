@@ -158,60 +158,12 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
-    font-size: 17px;
-    line-height: 1.65;
-    letter-spacing: 0.01em;
+    @apply bg-background text-foreground text-[15px] leading-relaxed;
   }
   html {
     @apply font-sans antialiased;
     scroll-behavior: smooth;
-    text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-    font-size: 17px;
-  }
-
-  /* Readable minimum sizes everywhere */
-  p, span, li, td, th, a, div {
-    font-size: inherit;
-    line-height: inherit;
-  }
-  label {
-    font-size: 15px !important;
-    letter-spacing: 0.01em;
-  }
-  h1 { font-size: 2rem !important; font-weight: 700; }
-  h2 { font-size: 1.5rem !important; font-weight: 700; }
-  h3 { font-size: 1.25rem !important; font-weight: 600; }
-
-  input, select, textarea {
-    font-size: 17px !important;
-    line-height: 1.5 !important;
-  }
-  button {
-    font-size: 15px !important;
-  }
-
-  /* Fix shadcn text-sm and text-xs overrides */
-  [data-slot="card"] {
-    font-size: 16px !important;
-  }
-  [data-slot="card-description"] {
-    font-size: 15px !important;
-  }
-  [data-slot="badge"] {
-    font-size: 13px !important;
-  }
-  [data-slot="table"] td,
-  [data-slot="table"] th {
-    font-size: 15px !important;
-    padding: 12px 16px !important;
-  }
-
-  /* Sidebar readability */
-  [data-slot="sidebar"] a,
-  aside a {
-    font-size: 14px !important;
   }
 }
 
